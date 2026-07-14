@@ -8,6 +8,8 @@ public abstract class Card : ScriptableObject
     [TextArea(3,30)]
     string cardDescription;
 
+    [SerializeField] string ID;
+
     [SerializeField]
     Sprite cardArt;
 
