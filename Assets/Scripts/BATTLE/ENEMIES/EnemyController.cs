@@ -19,6 +19,11 @@ public class EnemyController : MonoBehaviour, IPointerClickHandler, IPointerEnte
     public int Health => health;
     public int MaxHealth => maxHealth;
 
+    private void Start()
+    {
+        Initialize();
+    }
+
     public void Initialize()
     {
         // 1. Cargamos los datos del SO
@@ -28,6 +33,12 @@ public class EnemyController : MonoBehaviour, IPointerClickHandler, IPointerEnte
         if (spriteRenderer != null && enemyData.Artwork != null)
         {
             spriteRenderer.sprite = enemyData.Artwork;
+
+            BoxCollider2D col = GetComponent<BoxCollider2D>();
+            if (col != null && spriteRenderer.sprite != null)
+            {
+                col.size = spriteRenderer.sprite.bounds.size;
+            }
         }
 
         // 2. Avisamos a la UI que cree su barra
@@ -74,7 +85,11 @@ public class EnemyController : MonoBehaviour, IPointerClickHandler, IPointerEnte
     public void OnPointerClick(PointerEventData eventData)
     {
         // El BattleManager comprobará si el jugador estaba intentando lanzar una carta con objetivo.
-        BattleManager.Instance.OnEnemyClicked(this); 
+        if (BattleManager.Instance.State == BattleManager.BattleState.WAITING_TARGET)
+        {
+            // ...le mandamos este enemigo a tu método clásico
+            BattleManager.Instance.OnEnemyClicked(this);
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData) 

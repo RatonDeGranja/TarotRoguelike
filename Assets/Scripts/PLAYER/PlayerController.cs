@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     private int startWisdom;
     private int currentWisdom;
 
+    [SerializeField]
     private int maxHealth;
     private int currentHealth;
 
@@ -19,6 +20,9 @@ public class PlayerController : MonoBehaviour
     [Header("ARCANO MAYOR")]
     // 1. Variable privada para el Inspector
     [SerializeField] private Major equippedMajor;
+
+    [Header("Referencias Visuales")]
+    [SerializeField] private SpriteRenderer spriteRenderer;
 
     public int Wisdom => currentWisdom;
     public int Health => currentHealth;

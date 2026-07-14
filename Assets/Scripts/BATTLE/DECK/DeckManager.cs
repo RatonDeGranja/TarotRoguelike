@@ -26,16 +26,33 @@ public class DeckManager : MonoBehaviour
         else
             Destroy(gameObject);
     }
-
-    void Start()
+    private void OnEnable()
     {
-        //InitializeDeck();
-        //DrawStartingHand();
+        GameEvents.onCardPlayed += OnCardPlayedLogic;
     }
 
+    private void OnDisable()
+    {
+        GameEvents.onCardPlayed -= OnCardPlayedLogic;
+    }
+
+    private void OnCardPlayedLogic(Card playedCard)
+    {
+        if (hand.Contains(playedCard))
+        {
+            hand.Remove(playedCard);
+            discardPile.Enqueue(playedCard);
+            Debug.Log($"Carta descartada lógicamente. Cartas en descarte: {discardPile.Count}");
+        }
+    }
 
     public void InitializeDeck()
     {
+
+        drawPile.Clear();
+        discardPile.Clear();
+        hand.Clear();
+
         List<Card> tempDeck = new List<Card>(deck);
 
         // Barajar
@@ -44,8 +61,10 @@ public class DeckManager : MonoBehaviour
         // Llenar el mazo de robo
         foreach (Card card in tempDeck)
         {
-            drawPile.Enqueue(card);
+            // Creamos un clon único e independiente en la memoria RAM
+            Card uniqueCardInstance = Instantiate(card); 
             
+            drawPile.Enqueue(uniqueCardInstance);
         }
     }
 
@@ -109,11 +128,10 @@ public class DeckManager : MonoBehaviour
 
     public void DiscardHand()
     {
-        for(int i=0; i<hand.Count; i++)
+        while (hand.Count > 0)
         {
-            DiscardCard(i);
+            DiscardCard(0);
         }
-        
     }
 
     private void RecycleDiscardPile()

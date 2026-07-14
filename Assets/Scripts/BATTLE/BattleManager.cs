@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.InputSystem;
 public class BattleManager : MonoBehaviour
 {
     public static BattleManager Instance;
@@ -24,6 +24,7 @@ public class BattleManager : MonoBehaviour
     
     // Variables temporales para cuando el jugador va a usar una carta sobre un enemigo
     private Minor pendingCard; 
+    public Minor PendingCard => pendingCard;
     private Major equippedMajor;
     private bool isMajorInverted = false;
 
@@ -31,6 +32,17 @@ public class BattleManager : MonoBehaviour
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+    }
+
+    private void Update()
+    {
+        // Clic derecho para cancelar si estábamos esperando objetivo
+        if (state == BattleState.WAITING_TARGET && Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame)
+        {
+            pendingCard = null;
+            state = BattleState.PLAYER_TURN;
+            Debug.Log("Lanzamiento cancelado.");
+        }
     }
 
     private void OnEnable()
@@ -112,6 +124,19 @@ public class BattleManager : MonoBehaviour
             state = BattleState.WAITING_TARGET;
             Debug.Log($"Esperando objetivo para {cardToPlay.CardName}...");
         }
+    }
+
+    public void PlayCardOnTarget(Minor playedCard, EnemyController target)
+    {
+        if (state != BattleState.PLAYER_TURN) return;
+
+        if (PlayerController.Player.Wisdom < playedCard.WisdomCost || PlayerController.Player.Wisdom < playedCard.MinWisdomRequired) return;
+
+        // Ejecutamos la matemática
+        playedCard.PlayCard(PlayerController.Player, target);
+        
+        // Lanzamos el grito global para descartarla y limpiar memoria
+        GameEvents.onCardPlayed?.Invoke(playedCard);
     }
 
     // Este método lo llama el EnemyController al hacerle click
