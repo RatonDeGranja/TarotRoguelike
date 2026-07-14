@@ -19,6 +19,24 @@ public class EnemyController : MonoBehaviour, IPointerClickHandler, IPointerEnte
     public int Health => health;
     public int MaxHealth => maxHealth;
 
+    [Header("Interfaz")]
+    private HealthBar healthBar;
+    private RectTransform healthBarRect;
+
+    private void Awake()
+    {
+        // 1. Busca automáticamente en todos sus hijos el script HealthBar
+        healthBar = GetComponentInChildren<HealthBar>();
+
+        // 2. Si lo encuentra, extrae automáticamente su RectTransform (para moverlo luego)
+        if (healthBar != null)
+        {
+            Debug.Log("Hay health bar");
+            healthBarRect = healthBar.GetComponent<RectTransform>();
+            Debug.Log(healthBarRect);
+        }
+    }
+
     private void Start()
     {
         Initialize();
@@ -39,6 +57,21 @@ public class EnemyController : MonoBehaviour, IPointerClickHandler, IPointerEnte
             {
                 col.size = spriteRenderer.sprite.bounds.size;
             }
+        }
+
+        if (healthBarRect != null && spriteRenderer.sprite != null)
+        {
+            Debug.Log("Entra a posicionar la barra");
+            float spriteHalfHeight = spriteRenderer.sprite.bounds.extents.y;
+            float topOffset = 0.5f; 
+            
+            // Movemos el RectTransform hacia arriba
+            healthBarRect.localPosition = new Vector3(0, spriteHalfHeight + topOffset, 0);
+        }
+
+        if (healthBar != null) 
+        {
+            healthBar.UpdateHealth(health, maxHealth);
         }
 
         // 2. Avisamos a la UI que cree su barra
@@ -69,8 +102,14 @@ public class EnemyController : MonoBehaviour, IPointerClickHandler, IPointerEnte
             health -= 1;
             if (health < 0) health = 0;
 
+            if (healthBar != null) 
+            {
+                healthBar.UpdateHealth(health, maxHealth);
+            }
+            
             // Mandamos el grito a la UI con la información actualizada de ESTE enemigo
             GameEvents.onEnemyHealthChanged?.Invoke(this, health, maxHealth);
+            
 
             yield return new WaitForEndOfFrame();
 
