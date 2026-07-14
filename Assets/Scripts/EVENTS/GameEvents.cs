@@ -6,6 +6,10 @@ public static class GameEvents
     public static Action onTurnStart;
     public static Action<Card> onCardPlayed;
     public static Action<Card> onCardDrawn;
+    public static Action onBattleWon;
+
+    //MAJORES
+    public static Action onMajorInverted;
 
     //PLAYER STATS CHANGED
     public static Action<int, int> onPlayerHealthChanged; // (vidaActual, vidaMaxima)

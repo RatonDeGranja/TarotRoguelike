@@ -16,10 +16,15 @@ public class PlayerController : MonoBehaviour
     [Header("TEMPORAL STATS")]
     private int armor;
 
+    [Header("ARCANO MAYOR")]
+    // 1. Variable privada para el Inspector
+    [SerializeField] private Major equippedMajor;
+
     public int Wisdom => currentWisdom;
     public int Health => currentHealth;
     public int MaxHealth => maxHealth;
     public int Armor => armor;
+    public Major EquippedMajor => equippedMajor;
 
     private void Awake()
     {

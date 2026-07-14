@@ -1,0 +1,211 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class BattleManager : MonoBehaviour
+{
+    public static BattleManager Instance;
+
+    public enum BattleState
+    {
+        START,
+        PLAYER_TURN,
+        WAITING_TARGET,
+        ENEMY_TURN,
+        WIN,
+        LOSE
+    }
+
+    [Header("Estado Actual")]
+    private BattleState state;
+
+    // Lista para llevar el control de los enemigos vivos
+    private List<EnemyController> activeEnemies = new List<EnemyController>();
+    
+    // Variables temporales para cuando el jugador va a usar una carta sobre un enemigo
+    private Minor pendingCard; 
+    private Major equippedMajor;
+    private bool isMajorInverted = false;
+
+    private void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
+
+    private void OnEnable()
+    {
+        // Nos suscribimos a los nacimientos y muertes para mantener la lista actualizada
+        GameEvents.onEnemySpawned += AddEnemy;
+        GameEvents.onEnemyDied += RemoveEnemy;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.onEnemySpawned -= AddEnemy;
+        GameEvents.onEnemyDied -= RemoveEnemy;
+    }
+
+    private void Start()
+    {
+        // Aqui se cargaran los datos del SaveManager
+        // Por ahora, simulamos el inicio del combate
+        StartBattle();
+    }
+
+    public void StartBattle()
+    {
+        state = BattleState.START;
+        
+        // 1. Inicializamos el mazo
+        DeckManager.Instance.InitializeDeck();
+
+        // 2. Activamos la pasiva del Arcano Mayor
+        equippedMajor = PlayerController.Player.EquippedMajor;
+        equippedMajor?.SubscribePassive();
+        isMajorInverted = false;
+
+        // 3. Empezamos el turno
+        StartCoroutine(SetupBattleAndStartPlayerTurn());
+    }
+
+    private IEnumerator SetupBattleAndStartPlayerTurn()
+    {
+        // Pequeña pausa para que las barras de vida y animaciones iniciales terminen
+        yield return new WaitForSeconds(1f); 
+        
+        StartPlayerTurn();
+    }
+
+    // --- FLUJO DEL TURNO DEL JUGADOR ---
+
+    public void StartPlayerTurn()
+    {
+        state = BattleState.PLAYER_TURN;
+        
+        // El grito global activa las pasivas
+        GameEvents.onTurnStart?.Invoke(); 
+
+        // Robamos la mano inicial de este turno
+        DeckManager.Instance.DrawStartingHand(); 
+        
+        Debug.Log("Turno del Jugador. Esperando acciones...");
+    }
+
+    // Este método lo llamará el HandManager cuando el jugador arrastre una carta
+    public void PlayCard(Minor cardToPlay)
+    {
+        if (state != BattleState.PLAYER_TURN) return;
+
+        if (PlayerController.Player.Wisdom < cardToPlay.WisdomCost || PlayerController.Player.Wisdom < cardToPlay.MinWisdomRequired) return;
+
+        if (cardToPlay.Target == TargetType.ToPlayer)
+        {
+            // Ejecución inmediata
+            cardToPlay.PlayCard(PlayerController.Player, null);
+            GameEvents.onCardPlayed?.Invoke(cardToPlay);
+        }
+        else if (cardToPlay.Target == TargetType.ToEnemy)
+        {
+            // Esperamos a que el jugador haga clic en un enemigo
+            pendingCard = cardToPlay;
+            state = BattleState.WAITING_TARGET;
+            Debug.Log($"Esperando objetivo para {cardToPlay.CardName}...");
+        }
+    }
+
+    // Este método lo llama el EnemyController al hacerle click
+    public void OnEnemyClicked(EnemyController clickedEnemy)
+    {
+        if (state == BattleState.WAITING_TARGET && pendingCard != null)
+        {
+            pendingCard.PlayCard(PlayerController.Player, clickedEnemy);
+            GameEvents.onCardPlayed?.Invoke(pendingCard);
+
+            pendingCard = null;
+            state = BattleState.PLAYER_TURN;
+        }
+    }
+
+    // Puedes llamar a este método si el jugador cancela el lanzamiento de la carta 
+    public void CancelTargeting()
+    {
+        if (state == BattleState.WAITING_TARGET)
+        {
+            pendingCard = null;
+            state = BattleState.PLAYER_TURN;
+            Debug.Log("Lanzamiento cancelado.");
+        }
+    }
+
+    // Este método lo llamará el botón de "Terminar Turno" de la UI
+    public void EndPlayerTurn()
+    {
+        if (state != BattleState.PLAYER_TURN && state != BattleState.WAITING_TARGET) return;
+
+        DeckManager.Instance.DiscardHand();
+        
+        StartCoroutine(EnemyTurnRoutine());
+    }
+
+    // --- FLUJO DEL TURNO DEL ENEMIGO ---
+
+    private IEnumerator EnemyTurnRoutine()
+    {
+        state = BattleState.ENEMY_TURN;
+        Debug.Log("Turno de los Enemigos...");
+
+        // Usamos una copia de la lista por si un enemigo muere por efecto de veneno durante su propio turno (ejemplo)
+        List<EnemyController> enemiesToAct = new List<EnemyController>(activeEnemies);
+
+        foreach (EnemyController enemy in enemiesToAct)
+        {
+            // Si el enemigo sigue vivo, ataca
+            if (enemy.Health > 0)
+            {
+                enemy.Act();
+                yield return new WaitForSeconds(1f); // Ritmo visual entre ataques
+            }
+        }
+
+        // Al terminar, vuelve a ser el turno del jugador
+        StartPlayerTurn();
+    }
+
+    // --- ARCANO MAYOR ---
+
+    // Este método lo llama el botón de UI de "Invertir"
+    public void InvertMajorArcana()
+    {
+        if (isMajorInverted || equippedMajor == null) return;
+
+        isMajorInverted = true;
+        equippedMajor.UnsubscribePassive(); // Quitamos la pasiva
+        equippedMajor.ActiveEffect(); 
+
+        // Avisamos a la UI para que haga la animación de girar la carta
+        GameEvents.onMajorInverted?.Invoke(); 
+    }
+
+    // --- GESTIÓN DE LISTA DE ENEMIGOS ---
+
+    private void AddEnemy(EnemyController enemy)
+    {
+        if (!activeEnemies.Contains(enemy)) activeEnemies.Add(enemy);
+    }
+
+    private void RemoveEnemy(EnemyController enemy)
+    {
+        if (activeEnemies.Contains(enemy)) activeEnemies.Remove(enemy);
+        
+        // Comprobar victoria
+        if (activeEnemies.Count == 0)
+        {
+            state = BattleState.WIN;
+            Debug.Log("¡Batalla Ganada!");
+            GameEvents.onBattleWon?.Invoke();
+        }
+    }
+
+    public BattleState State => state;
+}

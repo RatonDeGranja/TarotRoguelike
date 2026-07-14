@@ -49,7 +49,7 @@ public class DeckManager : MonoBehaviour
         }
     }
 
-    void DrawStartingHand()
+    public void DrawStartingHand()
     {
         for (int i = 0; i < startingHandSize; i++)
             DrawCard();
@@ -105,6 +105,15 @@ public class DeckManager : MonoBehaviour
             return false;
         }
 
+    }
+
+    public void DiscardHand()
+    {
+        for(int i=0; i<hand.Count; i++)
+        {
+            DiscardCard(i);
+        }
+        
     }
 
     private void RecycleDiscardPile()

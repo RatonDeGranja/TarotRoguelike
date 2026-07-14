@@ -73,9 +73,8 @@ public class EnemyController : MonoBehaviour, IPointerClickHandler, IPointerEnte
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        // Ahora el enemigo es "tonto". Solo le dice al gestor: "¡Me han pinchado!"
         // El BattleManager comprobará si el jugador estaba intentando lanzar una carta con objetivo.
-        // BattleManager.Instance.OnEnemyClicked(this); 
+        BattleManager.Instance.OnEnemyClicked(this); 
     }
 
     public void OnPointerEnter(PointerEventData eventData) 

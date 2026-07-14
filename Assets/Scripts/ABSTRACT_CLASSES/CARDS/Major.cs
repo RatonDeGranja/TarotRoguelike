@@ -9,5 +9,5 @@ public abstract class Major : Card
     public abstract void UnsubscribePassive();
 
 
-    public abstract void activeEffect();
+    public abstract void ActiveEffect();
 }

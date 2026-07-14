@@ -4,7 +4,7 @@ using UnityEngine;
 public class Hermit : Major
 {
 
-    public override void activeEffect()
+    public override void ActiveEffect()
     {
         Debug.Log("Hermit Active Effect");  
     }
@@ -12,20 +12,19 @@ public class Hermit : Major
     public override void SubscribePassive()
     {
         // Nos suscribimos al grito global de "¡Empieza el turno!"
-        //GameEvents.onTurnStart += ApplyPassive;
+        GameEvents.onTurnStart += ApplyPassive;
     }
 
     public override void UnsubscribePassive()
     {
         // Obligatorio: nos desuscribimos para que no robe cartas si el Arcano se invierte
-        //GameEvents.onTurnStart -= ApplyPassive;
+        GameEvents.onTurnStart -= ApplyPassive;
     }
 
     private void ApplyPassive()
     {
         Debug.Log("Pasiva del Ermitaño: Robando carta extra...");
-        // Aquí llamarás a tu Gestor de Cartas
-        // DeckManager.Instance.DrawCard();
+        DeckManager.Instance.DrawCard();
         // BattleManager.Instance.StartDiscardPhase();
     }
 }
