@@ -144,6 +144,7 @@ public class CardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        Debug.Log("Entra en OnEndDrag");
         if (!isDragging) return;
         isDragging = false;
 

@@ -9,7 +9,7 @@ public class Sword : Minor
         // Verificamos que se haya seleccionado un enemigo (puesto que su TargetType será ToEnemy)
         if (targetEnemy != null)
         {
-            // targetEnemy.takeDamage(damageAmount); <-- Cuando tengas la clase EnemyController lista
+            targetEnemy.takeDamage(damage);
             Debug.Log($"La carta {CardName} ha infligido {damage} de daño.");
         }
         else 

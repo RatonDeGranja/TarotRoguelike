@@ -10,7 +10,7 @@ public class EnemyController : MonoBehaviour, IPointerClickHandler, IPointerEnte
     // Referencia al sprite para asignarle el dibujo del ScriptableObject
     [SerializeField] private SpriteRenderer spriteRenderer; 
 
-    private int health;
+    [SerializeField] private int health;
     private int maxHealth;
     private int currentPatternIndex = 0;
 
@@ -92,11 +92,13 @@ public class EnemyController : MonoBehaviour, IPointerClickHandler, IPointerEnte
     public void takeDamage(int damage)
     {
         // Matemáticas puras. La lógica visual del "flip" la moveremos al BattleManager o a un script de animaciones.
+        Debug.Log("Entra en take damage");
         StartCoroutine(TakeDamageOneByOne(damage));
     }
 
     private IEnumerator TakeDamageOneByOne(int damage)
     {
+        Debug.Log("Entra en TakeDamageOneByOne");
         for (int i = 0; i < damage; i++)
         {
             health -= 1;
