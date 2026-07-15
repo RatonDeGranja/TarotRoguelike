@@ -23,13 +23,12 @@ public class EnemyController : MonoBehaviour, IPointerClickHandler, IPointerEnte
     private int maxHealth;
     private int currentPatternIndex = 0;
 
-    [SerializeField] private bool atras;
-
     public int Health => health;
     public int MaxHealth => maxHealth;
+    
 
     FieldSide enemySide;
-
+    public FieldSide Side => enemySide;
 
     [Header("Interfaz")]
     private HealthBar healthBar;
@@ -118,9 +117,23 @@ public class EnemyController : MonoBehaviour, IPointerClickHandler, IPointerEnte
     {
         if (enemyData.attackPatterns.Count == 0) return;
 
+        bool backwards = PlayerController.Player.CheckBackwards(enemySide);
+
+
         // Leemos la acción directamente del ScriptableObject
-        EnemyActionSO action = enemyData.attackPatterns[currentPatternIndex];
-        action.Execute(this, PlayerController.Player);
+        if (backwards)
+        {
+            EnemyActionSO action = enemyData.attackPatterns[currentPatternIndex];
+            action.Execute(this, PlayerController.Player);
+            Debug.Log("Ataca desde atrás");
+        }
+        else
+        {
+            EnemyActionSO action = enemyData.attackPatterns[currentPatternIndex];
+            action.Execute(this, PlayerController.Player);
+            Debug.Log("Ataca desde delante");
+        }
+        
 
         currentPatternIndex = (currentPatternIndex + 1) % enemyData.attackPatterns.Count;
     }
@@ -162,7 +175,8 @@ public class EnemyController : MonoBehaviour, IPointerClickHandler, IPointerEnte
         if (BattleManager.Instance.State == BattleManager.BattleState.WAITING_TARGET)
         {
             // ...le mandamos este enemigo a tu método clásico
-            BattleManager.Instance.OnEnemyClicked(this);
+            if(health > 0) BattleManager.Instance.OnEnemyClicked(this);
+            
         }
     }
 
@@ -214,8 +228,4 @@ public class EnemyController : MonoBehaviour, IPointerClickHandler, IPointerEnte
         GameEvents.onEnemyDied?.Invoke(this); // Avisar a la UI que borre los elementos asociados
         gameObject.SetActive(false);
     }
-
-
-    public void setAtras(bool set) => atras = set;
-    public bool getAtras() => atras;
 }

@@ -144,6 +144,10 @@ public class BattleManager : MonoBehaviour
     {
         if (state == BattleState.WAITING_TARGET && pendingCard != null)
         {
+            if (PlayerController.Player.CheckBackwards(clickedEnemy.Side))
+            {
+                PlayerController.Player.ChangeDirection();
+            }
             pendingCard.PlayCard(PlayerController.Player, clickedEnemy);
             GameEvents.onCardPlayed?.Invoke(pendingCard);
 

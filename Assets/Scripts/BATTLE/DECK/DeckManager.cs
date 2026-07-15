@@ -109,13 +109,16 @@ public class DeckManager : MonoBehaviour
 
     public bool DiscardCard(int index)
     {
-        if (currentHandSize >= 1)
+        if (index >= 0 && index < hand.Count)
         {
-            currentHandSize--;
-            //Debug.Log("Descartando");
+            Debug.Log("Descartando");
             Card carta = hand[index];
             hand.RemoveAt(index);
+            if (discardPile == null) Debug.LogError("¡La pila de descartes es null!");
+            if (HandManager.Instance == null) Debug.LogError("¡El HandManager es null!");
+            if (carta == null) Debug.LogError("¡La carta es null!");
             discardPile.Enqueue(carta);
+            HandManager.Instance.OnCardPlayedVisual(carta);
             return true;
         }
         else
@@ -128,9 +131,17 @@ public class DeckManager : MonoBehaviour
 
     public void DiscardHand()
     {
+        int contadorSeguridad = 0;
         while (hand.Count > 0)
         {
             DiscardCard(0);
+
+            contadorSeguridad++;
+            if (contadorSeguridad > 20) 
+            {
+                Debug.LogError("¡Bucle infinito evitado!");
+                break; // Rompe el bucle a la fuerza
+            }
         }
     }
 

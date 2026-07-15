@@ -5,6 +5,8 @@ public class HandManager : MonoBehaviour
 {
     // No necesitamos un Singleton aquí, el gestor vive y muere en la escena de combate
     
+    public static HandManager Instance;
+
     [Header("Referencias Visuales")]
     [SerializeField] private GameObject cardPrefab;
     [SerializeField] private Transform handParent;
@@ -17,6 +19,13 @@ public class HandManager : MonoBehaviour
 
     // Lista puramente visual de los objetos que existen en el Canvas
     private List<CardDisplay> visualCards = new List<CardDisplay>();
+
+    private void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
+
 
     private void OnEnable()
     {
@@ -47,7 +56,7 @@ public class HandManager : MonoBehaviour
         UpdateHandLayout();
     }
 
-    private void OnCardPlayedVisual(Card playedCardLogic)
+    public void OnCardPlayedVisual(Card playedCardLogic)
     {
         // Buscamos cuál es el "cartón" en pantalla que tiene esta lógica
         CardDisplay cardToDiscard = visualCards.Find(c => c.CardData == playedCardLogic);
@@ -57,7 +66,7 @@ public class HandManager : MonoBehaviour
         }
     }
 
-    public void RemoveCardVisual(CardDisplay cardToRemove)
+    private void RemoveCardVisual(CardDisplay cardToRemove)
     {
         // Este método lo llamaremos cuando el jugador juegue o descarte la carta
         if (visualCards.Contains(cardToRemove))

@@ -30,17 +30,26 @@ public class PlayerController : MonoBehaviour
     private HealthBar healthBar;
     private RectTransform healthBarRect;
 
+    [Header("Otros")]
+    private FieldSide direction;
+
+
+
     public int Wisdom => currentWisdom;
     public int Health => currentHealth;
     public int MaxHealth => maxHealth;
     public int Armor => armor;
     public Major EquippedMajor => equippedMajor;
 
+
+
     private void Awake()
     {
         // Inicialización del Singleton
         if (Player == null) Player = this;
         else Destroy(gameObject);
+
+        direction = FieldSide.Right;
 
         healthBar = GetComponentInChildren<HealthBar>();
         if (healthBar != null)
@@ -78,6 +87,28 @@ public class PlayerController : MonoBehaviour
             
             Debug.Log($"¡Ouch! Vida actual: {currentHealth}");
         }
+    }
+
+    public void ChangeDirection()
+    {
+        if (direction == FieldSide.Right)
+        {
+            direction = FieldSide.Left;
+        }
+        else
+        {
+            direction = FieldSide.Right;
+        }
+        spriteRenderer.flipX = !spriteRenderer.flipX;
+    }
+
+    public bool CheckBackwards(FieldSide direction)
+    {
+        if (this.direction != direction)
+        {
+            return true;
+        }
+        return false;
     }
 
     private void UpdateHealthBar()
