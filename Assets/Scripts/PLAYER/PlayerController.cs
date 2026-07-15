@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(SpriteRenderer))]
 public class PlayerController : MonoBehaviour
 {
     public static PlayerController Player { get; private set; }
@@ -24,6 +26,10 @@ public class PlayerController : MonoBehaviour
     [Header("Referencias Visuales")]
     [SerializeField] private SpriteRenderer spriteRenderer;
 
+    [Header("Interfaz")]
+    private HealthBar healthBar;
+    private RectTransform healthBarRect;
+
     public int Wisdom => currentWisdom;
     public int Health => currentHealth;
     public int MaxHealth => maxHealth;
@@ -35,6 +41,14 @@ public class PlayerController : MonoBehaviour
         // Inicialización del Singleton
         if (Player == null) Player = this;
         else Destroy(gameObject);
+
+        healthBar = GetComponentInChildren<HealthBar>();
+        if (healthBar != null)
+        {
+            Debug.Log("Hay health bar");
+            healthBarRect = healthBar.GetComponent<RectTransform>();
+            Debug.Log(healthBarRect);
+        }
     }
 
     private void Start()
@@ -43,9 +57,50 @@ public class PlayerController : MonoBehaviour
         currentWisdom = startWisdom;
         armor = 0;
 
+        //QUITAR CUANDO YA HAYA BUCLE DE JUEGO PARA NO CURARTE ENTRE COMBATES
+        currentHealth = maxHealth;
+
+
+        UpdateHealthBar();
+        PositionHealthBar();
+
         // Avisamos a la UI de los valores iniciales
         GameEvents.onPlayerWisdomChanged?.Invoke(currentWisdom);
     }
+
+    private void Update()
+    {
+        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+        {
+            currentHealth -= 10;
+            
+            UpdateHealthBar();
+            
+            Debug.Log($"¡Ouch! Vida actual: {currentHealth}");
+        }
+    }
+
+    private void UpdateHealthBar()
+    {
+        if (healthBar != null) 
+        {
+            healthBar.UpdateHealth(currentHealth, maxHealth);
+        }
+    }
+
+    private void PositionHealthBar()
+    {
+        if (healthBarRect != null && spriteRenderer.sprite != null)
+        {
+            Debug.Log("Entra a posicionar la barra del jugador");
+            float spriteHalfHeight = spriteRenderer.sprite.bounds.extents.y;
+            float topOffset = 0.5f; 
+            
+            // Movemos el RectTransform hacia arriba
+            healthBarRect.localPosition = new Vector3(0, spriteHalfHeight + topOffset, 0);
+        }
+    }
+
 
     public void takeDamage(int damage)
     {
@@ -67,6 +122,8 @@ public class PlayerController : MonoBehaviour
         {
             currentHealth -= 1;
             if (currentHealth < 0) currentHealth = 0;
+
+            UpdateHealthBar();
 
             // Mandamos el grito a la UI con la información actualizada
             GameEvents.onPlayerHealthChanged?.Invoke(currentHealth, maxHealth);
