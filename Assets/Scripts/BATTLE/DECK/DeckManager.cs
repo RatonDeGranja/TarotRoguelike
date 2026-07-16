@@ -68,6 +68,22 @@ public class DeckManager : MonoBehaviour
         }
     }
 
+    // Esta funcion es para cuando se añade una carta a lamano de alguna forma que no sea robando
+    public void AddGeneratedCardToHand(Card card)
+    {
+        if (hand.Count >= maxHandSize)
+        {
+            Debug.Log("Mano llena. No cabe la copia.");
+            return;
+        }
+
+        Card clonedCard = Instantiate(card);
+
+        hand.Add(clonedCard);
+        
+        GameEvents.onCardDrawn?.Invoke(clonedCard); 
+    }
+
     public void DrawStartingHand()
     {
         for (int i = 0; i < startingHandSize; i++)
@@ -100,9 +116,8 @@ public class DeckManager : MonoBehaviour
             RecycleDiscardPile();
         }
 
+        
         Card drawnCard = drawPile.Dequeue();
-        hand.Add(drawnCard);
-
         // Avisamos de que una carta ha entrado a la mano
         GameEvents.onCardDrawn?.Invoke(drawnCard);
     }

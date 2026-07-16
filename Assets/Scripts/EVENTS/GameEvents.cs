@@ -14,6 +14,10 @@ public static class GameEvents
     //PLAYER STATS CHANGED
     public static Action<int, int> onPlayerHealthChanged; // (vidaActual, vidaMaxima)
     public static Action<int> onPlayerWisdomChanged;      // (sabiduriaActual)
+    public static Action<int> onPlayerGoldChanged;        // (oroActual)
+    public static Action<int> onPlayerArmorChanged;       // (armaduraActual)
+
+
 
     //ENEMY EVENTS
     public static Action<EnemyController, int, int> onEnemyHealthChanged; // (enemigo, vidaAct, vidaMax)

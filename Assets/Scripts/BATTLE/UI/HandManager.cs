@@ -12,9 +12,9 @@ public class HandManager : MonoBehaviour
     [SerializeField] private Transform handParent;
 
     [Header("Ajustes del Abanico (Curva)")]
-    [SerializeField] private float handWidth = 800f; // Ancho máximo que puede ocupar toda la mano
-    [SerializeField] private float cardSpacing = 150f; // Espacio ideal entre cada carta
-    [SerializeField] private float curveHeight = 30f; // Cuánto se elevan las cartas centrales (el arco)
+    [SerializeField] private float handWidth = 100; // Ancho máximo que puede ocupar toda la mano
+    [SerializeField] private float cardSpacing = 5f; // Espacio ideal entre cada carta
+    [SerializeField] private float curveHeight = 1f; // Cuánto se elevan las cartas centrales (el arco)
     [SerializeField] private float maxCardRotation = 12f; // Ángulo máximo al que se inclinan las de los extremos
 
     // Lista puramente visual de los objetos que existen en el Canvas
@@ -25,7 +25,6 @@ public class HandManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
-
 
     private void OnEnable()
     {
@@ -78,6 +77,8 @@ public class HandManager : MonoBehaviour
             UpdateHandLayout();
         }
     }
+
+    
 
     // La matemática pura del abanico de cartas
     private void UpdateHandLayout()

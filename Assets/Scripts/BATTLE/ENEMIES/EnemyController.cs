@@ -117,30 +117,14 @@ public class EnemyController : MonoBehaviour, IPointerClickHandler, IPointerEnte
     {
         if (enemyData.attackPatterns.Count == 0) return;
 
-        bool backwards = PlayerController.Player.CheckBackwards(enemySide);
-
-
-        // Leemos la acción directamente del ScriptableObject
-        if (backwards)
-        {
-            EnemyActionSO action = enemyData.attackPatterns[currentPatternIndex];
-            action.Execute(this, PlayerController.Player);
-            Debug.Log("Ataca desde atrás");
-        }
-        else
-        {
-            EnemyActionSO action = enemyData.attackPatterns[currentPatternIndex];
-            action.Execute(this, PlayerController.Player);
-            Debug.Log("Ataca desde delante");
-        }
-        
+        StartCoroutine(AttackLungeRoutine());
 
         currentPatternIndex = (currentPatternIndex + 1) % enemyData.attackPatterns.Count;
     }
 
     public void takeDamage(int damage)
     {
-        // Matemáticas puras. La lógica visual del "flip" la moveremos al BattleManager o a un script de animaciones.
+
         Debug.Log("Entra en take damage");
         StartCoroutine(TakeDamageOneByOne(damage));
     }
@@ -227,5 +211,52 @@ public class EnemyController : MonoBehaviour, IPointerClickHandler, IPointerEnte
         // 5. Destruimos al enemigo, lo devolvemos a una Pool, o le decimos al EncounterManager que ha muerto
         GameEvents.onEnemyDied?.Invoke(this); // Avisar a la UI que borre los elementos asociados
         gameObject.SetActive(false);
+    }
+
+    private IEnumerator AttackLungeRoutine()
+    {
+        EnemyActionSO action;
+        Vector3 startPos = transform.position;
+        
+        float direction = (Side == FieldSide.Right) ? -1f : 1f; 
+        Vector3 targetPos = startPos + new Vector3(direction * 1.5f, 0, 0); // 1.5f es la distancia del salto
+
+        float animationSpeed = 5f;
+        float percent = 0;
+
+        // 1. EMBESTIDA (Ir hacia el objetivo)
+        while (percent < 1)
+        {
+            percent += Time.deltaTime * animationSpeed;
+            transform.position = Vector3.Lerp(startPos, targetPos, percent);
+            yield return null;
+        }
+
+        // 2. GOLPE
+        bool backwards = PlayerController.Player.CheckBackwards(Side);
+        if (backwards)
+        {
+            action = enemyData.attackPatterns[currentPatternIndex];
+            Debug.Log("Ataca desde atrás");
+        }
+        else
+        {
+            action = enemyData.attackPatterns[currentPatternIndex];
+            Debug.Log("Ataca desde delante");
+        }
+        action.Execute(this, PlayerController.Player);
+
+        yield return new WaitForSeconds(0.1f);
+
+        // 3. RETROCESO (Volver a la posición inicial)
+        percent = 0;
+        while (percent < 1)
+        {
+            percent += Time.deltaTime * animationSpeed;
+            transform.position = Vector3.Lerp(targetPos, startPos, percent);
+            yield return null;
+        }
+
+        transform.position = startPos;
     }
 }

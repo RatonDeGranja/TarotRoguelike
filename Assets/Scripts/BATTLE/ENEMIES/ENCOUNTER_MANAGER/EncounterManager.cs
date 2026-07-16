@@ -3,15 +3,27 @@ using UnityEngine;
 
 public class EncounterManager : MonoBehaviour
 {
+    public static EncounterManager Instance;
+
+
+
     [Header("Datos y Prefabs")]
     [SerializeField] private EncounterData encounterData; 
     [SerializeField] private GameObject enemyDisplay; 
+    private int winGold;
+    public int WinGold => winGold;
 
     [Header("Posiciones en la escena")]
     [SerializeField] private Transform[] leftSlots;  // Los puntos vacíos a la izquierda
     [SerializeField] private Transform[] rightSlots; // Los puntos vacíos a la derecha
 
     private List<EnemyController> activeEnemies = new List<EnemyController>();
+
+    private void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
     private void OnEnable()
     {
         GameEvents.onEnemyDied += HandleEnemyDeath;
@@ -24,6 +36,8 @@ public class EncounterManager : MonoBehaviour
 
     private void Start()
     {
+        winGold = encounterData.VictoryGold;
+
         for (int i = 0; i < encounterData.leftEnemies.Length; i++)
         {
             Enemy enemyData = encounterData.leftEnemies[i];
@@ -80,5 +94,10 @@ public class EncounterManager : MonoBehaviour
             Debug.Log("¡VICTORIA! Todos los enemigos han sido derrotados.");
             // Aquí en el futuro llamaremos a la pantalla de recompensas, dar oro, etc.
         }
+    }
+
+    public void AddWinGold(int gold)
+    {
+        winGold += gold;
     }
 }

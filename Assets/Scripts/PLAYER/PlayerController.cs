@@ -1,6 +1,13 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
+public enum States
+{
+    NO_ATTACK,
+    POISONED
+}
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class PlayerController : MonoBehaviour
@@ -15,6 +22,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private int maxHealth;
     private int currentHealth;
+
+    private int gold;
 
     [Header("TEMPORAL STATS")]
     private int armor;
@@ -32,6 +41,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Otros")]
     private FieldSide direction;
+    private List<States> states = new List<States>();
 
 
 
@@ -40,6 +50,21 @@ public class PlayerController : MonoBehaviour
     public int MaxHealth => maxHealth;
     public int Armor => armor;
     public Major EquippedMajor => equippedMajor;
+    public List<States> States => states;
+
+    public void AddState(States newState)
+    {
+        if (!states.Contains(newState)) states.Add(newState);
+    }
+    public void RemoveState(States oldState)
+    {
+        if (states.Contains(oldState)) states.Remove(oldState);
+    }
+    public bool CheckState(States state)
+    {
+        if (states.Contains(state)) return true;
+        return false;
+    }
 
 
 
@@ -145,6 +170,30 @@ public class PlayerController : MonoBehaviour
     public void heal(int life_gained)
     {  
         StartCoroutine(GainLifeSteps(life_gained));
+    }
+
+    public void GainWisdom(int wisdom_gained)
+    {
+        currentWisdom += wisdom_gained;
+        GameEvents.onPlayerWisdomChanged?.Invoke(currentWisdom);
+    }
+
+    public void GainGold(int gold_gained)
+    {
+        gold += gold_gained;
+        GameEvents.onPlayerGoldChanged?.Invoke(gold);
+    }
+
+    public void AddArmor(int armor_gained)
+    {
+        armor += armor_gained;
+        GameEvents.onPlayerArmorChanged?.Invoke(armor);
+    }
+
+
+    public void setMajor(Major card)
+    {
+        equippedMajor = card;
     }
 
     IEnumerator TakeDamageSteps(int damage)

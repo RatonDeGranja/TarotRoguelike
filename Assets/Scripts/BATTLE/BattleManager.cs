@@ -23,10 +23,15 @@ public class BattleManager : MonoBehaviour
     private List<EnemyController> activeEnemies = new List<EnemyController>();
     
     // Variables temporales para cuando el jugador va a usar una carta sobre un enemigo
+    [Header("Gestión De Cartas")]
     private Minor pendingCard; 
     public Minor PendingCard => pendingCard;
     private Major equippedMajor;
     private bool isMajorInverted = false;
+    private Minor lastCardPlayed;
+    public Minor LastCardPlayer => lastCardPlayed;
+
+
 
     private void Awake()
     {
@@ -116,6 +121,8 @@ public class BattleManager : MonoBehaviour
             // Ejecución inmediata
             cardToPlay.PlayCard(PlayerController.Player, null);
             GameEvents.onCardPlayed?.Invoke(cardToPlay);
+
+            if ((cardToPlay.CanBeSavedAsLast)) lastCardPlayed = cardToPlay;
         }
         else if (cardToPlay.Target == TargetType.ToEnemy)
         {
@@ -124,6 +131,8 @@ public class BattleManager : MonoBehaviour
             state = BattleState.WAITING_TARGET;
             Debug.Log($"Esperando objetivo para {cardToPlay.CardName}...");
         }
+
+        
     }
 
     public void PlayCardOnTarget(Minor playedCard, EnemyController target)
@@ -142,12 +151,14 @@ public class BattleManager : MonoBehaviour
     // Este método lo llama el EnemyController al hacerle click
     public void OnEnemyClicked(EnemyController clickedEnemy)
     {
-        if (state == BattleState.WAITING_TARGET && pendingCard != null)
+        if (state == BattleState.WAITING_TARGET && pendingCard != null && !PlayerController.Player.CheckState(States.NO_ATTACK))
         {
             if (PlayerController.Player.CheckBackwards(clickedEnemy.Side))
             {
                 PlayerController.Player.ChangeDirection();
             }
+
+            if ((pendingCard.CanBeSavedAsLast)) lastCardPlayed = pendingCard;
             pendingCard.PlayCard(PlayerController.Player, clickedEnemy);
             GameEvents.onCardPlayed?.Invoke(pendingCard);
 
@@ -231,6 +242,13 @@ public class BattleManager : MonoBehaviour
         if (activeEnemies.Count == 0)
         {
             state = BattleState.WIN;
+
+            if (EncounterManager.Instance != null)
+            {
+                PlayerController.Player.GainGold(EncounterManager.Instance.WinGold);
+                Debug.Log($"¡Has ganado {EncounterManager.Instance.WinGold} de oro!");
+            }
+            
             Debug.Log("¡Batalla Ganada!");
             GameEvents.onBattleWon?.Invoke();
         }
