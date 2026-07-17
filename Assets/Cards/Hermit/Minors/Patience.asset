@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc67b0dc939013e43bce7aeacd3eda4d, type: 3}
   m_Name: Patience
   m_EditorClassIdentifier: Assembly-CSharp::Patience
-  cardName: Patience
-  cardDescription: Gain 4 of wisdom. End your turn.
+  nameKey: Card_Patience_Name
+  descriptionKey: Card_Patience_Desc
   ID: 04
   cardArt: {fileID: 0}
   wisdomCost: 1

@@ -2,11 +2,8 @@ using UnityEngine;
 
 public abstract class Card : ScriptableObject
 {
-    [SerializeField] string cardName;
-
-    [SerializeField]
-    [TextArea(3,30)]
-    string cardDescription;
+    [SerializeField] private string nameKey; 
+    [SerializeField] private string descriptionKey; 
 
     [SerializeField] string ID;
 
@@ -15,8 +12,13 @@ public abstract class Card : ScriptableObject
 
 
     // Propiedades de C# (Solo lectura)
-    public string CardName => cardName;
-    public string CardDescription => cardDescription;
     public Sprite CardArt => cardArt;
+    public string CardName => LocalizationManager.Instance.GetText(nameKey);
+    public string CardDescription => LocalizationManager.Instance.GetText(descriptionKey);
 
+    public virtual string GetFormattedDescription()
+    {
+        // Por defecto, devuelve el texto crudo del CSV, las cartas con variables la tendran que sobreescribir
+        return LocalizationManager.Instance.GetText(descriptionKey);
+    }
 }

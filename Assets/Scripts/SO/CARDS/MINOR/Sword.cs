@@ -17,4 +17,11 @@ public class Sword : Minor
             Debug.LogWarning("No hay enemigo seleccionado para "+CardName);
         }
     }
+
+    public override string GetFormattedDescription()
+    {
+        string rawText = LocalizationManager.Instance.GetText(CardDescription);
+        // Le pasamos las variables en el mismo orden que queremos que aparezcan en los huecos {0} y {1}
+        return string.Format(rawText, damage); 
+    }
 }

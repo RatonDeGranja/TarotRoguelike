@@ -10,28 +10,19 @@ public class EncounterManager : MonoBehaviour
     [Header("Datos y Prefabs")]
     [SerializeField] private EncounterData encounterData; 
     [SerializeField] private GameObject enemyDisplay; 
+    [SerializeField] private List<Reward> rewards = new List<Reward>();
+    public List<Reward> Rewards => rewards; 
+
     private int winGold;
     public int WinGold => winGold;
 
     [Header("Posiciones en la escena")]
     [SerializeField] private Transform[] leftSlots;  // Los puntos vacíos a la izquierda
     [SerializeField] private Transform[] rightSlots; // Los puntos vacíos a la derecha
-
-    private List<EnemyController> activeEnemies = new List<EnemyController>();
-
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
-    }
-    private void OnEnable()
-    {
-        GameEvents.onEnemyDied += HandleEnemyDeath;
-    }
-
-    private void OnDisable()
-    {
-        GameEvents.onEnemyDied -= HandleEnemyDeath;
     }
 
     private void Start()
@@ -74,28 +65,6 @@ public class EncounterManager : MonoBehaviour
             }
         }
     }
-
-    private void HandleEnemyDeath(EnemyController deadEnemy)
-    {
-        if (activeEnemies.Contains(deadEnemy))
-        {
-            activeEnemies.Remove(deadEnemy);
-            Debug.Log($"Un enemigo ha caído. Quedan {activeEnemies.Count} enemigos vivos.");
-
-            // Comprobamos si la batalla ha terminado
-            CheckWinCondition();
-        }
-    }
-
-    private void CheckWinCondition()
-    {
-        if (activeEnemies.Count == 0)
-        {
-            Debug.Log("¡VICTORIA! Todos los enemigos han sido derrotados.");
-            // Aquí en el futuro llamaremos a la pantalla de recompensas, dar oro, etc.
-        }
-    }
-
     public void AddWinGold(int gold)
     {
         winGold += gold;

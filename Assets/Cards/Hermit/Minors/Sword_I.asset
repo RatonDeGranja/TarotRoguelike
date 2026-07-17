@@ -12,11 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46906e12948c4044e8e2bc6072ad4a89, type: 3}
   m_Name: Sword_I
   m_EditorClassIdentifier: Assembly-CSharp::Sword
-  cardName: Sword
-  cardDescription: Deals damage
+  nameKey: Card_Sword_Name
+  descriptionKey: Card_Sword_Desc
   ID: 01
   cardArt: {fileID: 21300000, guid: ba95d252825597b46abc60b12c2798e3, type: 3}
   wisdomCost: 1
   minWisdomRequired: 1
   target: 1
+  type: 0
+  canBeSavedAsLast: 1
   damage: 10

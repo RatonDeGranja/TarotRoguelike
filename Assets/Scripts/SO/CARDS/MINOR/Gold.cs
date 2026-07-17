@@ -12,5 +12,12 @@ public class Gold : Minor
             EncounterManager.Instance.AddWinGold(goldGained);
             player.AddArmor(armorGained);
         }
+        
+    }
+    public override string GetFormattedDescription()
+    {
+        string rawText = LocalizationManager.Instance.GetText(CardDescription);
+        // Le pasamos las variables en el mismo orden que queremos que aparezcan en los huecos {0} y {1}
+        return string.Format(rawText, goldGained, armorGained); 
     }
 }

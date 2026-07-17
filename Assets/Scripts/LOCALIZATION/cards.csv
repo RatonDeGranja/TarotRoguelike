@@ -1,0 +1,14 @@
+﻿KEY;ES;EN;VAL;;
+Card_Sword_Name;Espada;Sword;Espasa;;
+Card_Sword_Desc;Hace {0} puntos de daño a un objetivo;Deals {0} damage to a target;Fa {0} punts de dany a un objectiu;;
+Card_Cup_Name;Copa;Cup;Copa;;
+Card_Cup_Desc;Cura {0} de vida;Heals {0} life points;Cura {0} de vida;;
+Card_Gold_Name;Oro;Gold;Oro;;
+Card_Gold_Desc;Obtienes {0} de armadura y ganas {1} de oro extra al final del combate;You gain {0} armor and earn {1} extra gold at the end of combat;Obtens {0} d'armadura i ganes {1} d'or extra al final del combat;;
+Card_InnerLight_Name;Luz Interior;Inner Light;Llum interior;;
+Card_InnerLight_Desc;Ganas {0} de Sabiduría, no puedes atacar este turno;You gain {0} Wisdom. You cannot attack this turn;Guanyes {0} de Saviesa, no pots atacar aquest torn;;
+Card_Echoes_Name;Ecos del Tiempo;Echoes of Time;Ecos del Temps;;
+Card_Echoes_Desc;Crea una copia de la última carta jugada si es posible;Create a copy of the last card played, if possible;Crea una còpia de l'última carta jugada si és possible;;
+Card_Patience_Name;Paciencia;Patience;Paciència;;
+Card_Patience_Desc;Termina tu turno, gana {0} de Sabiduría;End your turn, gain {0} Wisdom;Acaba el teu torn, guanya {0} de Saviesa;;
+;;;;;

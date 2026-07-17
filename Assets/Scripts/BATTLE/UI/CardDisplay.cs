@@ -41,7 +41,7 @@ public class CardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         if (cardData != null)
         {
             nameText.text = cardData.CardName;
-            descriptionText.text = cardData.CardDescription;
+            descriptionText.text = cardData.GetFormattedDescription();;
             artImage.sprite = cardData.CardArt;
             if (costText != null) costText.text = cardData.WisdomCost.ToString();
         }

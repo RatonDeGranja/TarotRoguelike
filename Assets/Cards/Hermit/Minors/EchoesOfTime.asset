@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04c05aae9b10368479c11ecc84df2bb9, type: 3}
   m_Name: EchoesOfTime
   m_EditorClassIdentifier: Assembly-CSharp::EchoesTime
-  cardName: Echoes of Time
-  cardDescription: Create a copy of the last possible played card in our hand
+  nameKey: Card_Echoes_Name
+  descriptionKey: Card_Echoes_Desc
   ID: 03
   cardArt: {fileID: 0}
   wisdomCost: 2

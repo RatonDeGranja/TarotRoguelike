@@ -11,4 +11,11 @@ public class Cup : Minor
             player.heal(lifeGained);
         }
     }
+
+    //Para inyectar la variable en la traduccion
+    public override string GetFormattedDescription()
+    {
+        string rawText = LocalizationManager.Instance.GetText(CardDescription); // "Cura {0} de vida."
+        return string.Format(rawText, lifeGained); // Resultado: "Cura 10 de vida."
+    }
 }
