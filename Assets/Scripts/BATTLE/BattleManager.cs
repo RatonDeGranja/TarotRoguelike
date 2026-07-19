@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 public class BattleManager : MonoBehaviour
@@ -30,6 +31,22 @@ public class BattleManager : MonoBehaviour
     private bool isMajorInverted = false;
     private Minor lastCardPlayed;
     public Minor LastCardPlayer => lastCardPlayed;
+    private int wandExtraDamage;
+    public int WandExtraDamage => wandExtraDamage;
+
+    private int hasExtraTurn = 0;
+    public int HasExtraTurn => hasExtraTurn;
+
+    public void AddExtraTurn()
+    {
+        hasExtraTurn+=1;
+    }
+
+    public void AddWandExtraDamage()
+    {
+        wandExtraDamage+=1;
+    }
+
 
 
 
@@ -67,7 +84,7 @@ public class BattleManager : MonoBehaviour
     {
         // Aqui se cargaran los datos del SaveManager
         // Por ahora, simulamos el inicio del combate
-        StartBattle();
+        //StartBattle();
     }
 
     public void StartBattle()
@@ -81,6 +98,9 @@ public class BattleManager : MonoBehaviour
         equippedMajor = PlayerController.Player.EquippedMajor;
         equippedMajor?.SubscribePassive();
         isMajorInverted = false;
+        hasExtraTurn = 0;
+        wandExtraDamage = 0;
+
 
         // 3. Empezamos el turno
         StartCoroutine(SetupBattleAndStartPlayerTurn());
@@ -185,7 +205,17 @@ public class BattleManager : MonoBehaviour
 
         DeckManager.Instance.DiscardHand();
         
-        StartCoroutine(EnemyTurnRoutine());
+        GameEvents.onTurnEnd?.Invoke();
+
+        if (hasExtraTurn>0)
+        {
+            hasExtraTurn -= 1; 
+            StartPlayerTurn();
+        }
+        else
+        {
+            StartCoroutine(EnemyTurnRoutine());
+        }
     }
 
     // --- FLUJO DEL TURNO DEL ENEMIGO ---

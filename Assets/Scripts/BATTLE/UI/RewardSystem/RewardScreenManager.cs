@@ -30,12 +30,18 @@ public class RewardScreenManager : MonoBehaviour
     {
         visualPanel.SetActive(true);
 
-        foreach(Reward rew in EncounterManager.Instance.Rewards)
+        foreach(Reward rew in EncounterManager.Instance.EncounterData.Rewards)
         {
             GameObject nuevoBoton = Instantiate(rewardButtonPrefab, rewardsContainer);
             nuevoBoton.GetComponent<RewardButtonUI>().Setup(rew);
         }
 
+    }
+
+    public void OnContinueClicked()
+    {
+        visualPanel.SetActive(false);
+        GameEvents.onNextWaveTriggered?.Invoke();
     }
 
 }

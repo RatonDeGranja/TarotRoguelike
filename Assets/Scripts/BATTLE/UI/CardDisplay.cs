@@ -35,6 +35,27 @@ public class CardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     private bool isDragging = false; 
     private bool wasDragged = false; // <- NUEVO: Para saber si movimos el ratón
 
+    private void OnEnable()
+    {
+        GameEvents.onLanguageChanged += OnLanguageChanged;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.onLanguageChanged -= OnLanguageChanged;
+    }
+
+    private void OnLanguageChanged()
+    {
+        if (cardData != null)
+        {
+            nameText.text = cardData.CardName;
+            descriptionText.text = cardData.GetFormattedDescription();;
+            artImage.sprite = cardData.CardArt;
+            if (costText != null) costText.text = cardData.WisdomCost.ToString();
+        }
+    }
+
     public void Setup(Card data)
     {
         cardData = data as Minor;

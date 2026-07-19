@@ -9,16 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46906e12948c4044e8e2bc6072ad4a89, type: 3}
-  m_Name: Sword_I
-  m_EditorClassIdentifier: Assembly-CSharp::Sword
-  nameKey: Card_Sword_Name
-  descriptionKey: Card_Sword_Desc
-  ID: 01
-  cardArt: {fileID: 21300000, guid: ba95d252825597b46abc60b12c2798e3, type: 3}
-  wisdomCost: 1
+  m_Script: {fileID: 11500000, guid: b1564fc3bf888be4d8cb00a789d8c5e2, type: 3}
+  m_Name: Wand
+  m_EditorClassIdentifier: Assembly-CSharp::Wand
+  nameKey: Card_Wand_Name
+  descriptionKey: Card_Wand_Desc
+  ID: 08
+  cardArt: {fileID: -6426910345808927280, guid: 7c11438426fb43341a2d7f7dff1d12d2, type: 3}
+  wisdomCost: 2
   minWisdomRequired: 0
   target: 1
   type: 0
   canBeSavedAsLast: 1
-  damage: 10
+  damage: 12

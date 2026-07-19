@@ -9,19 +9,7 @@ public class Hermit : Major
         Debug.Log("Hermit Active Effect");  
     }
 
-    public override void SubscribePassive()
-    {
-        // Nos suscribimos al grito global de "¡Empieza el turno!"
-        GameEvents.onTurnStart += ApplyPassive;
-    }
-
-    public override void UnsubscribePassive()
-    {
-        // Obligatorio: nos desuscribimos para que no robe cartas si el Arcano se invierte
-        GameEvents.onTurnStart -= ApplyPassive;
-    }
-
-    private void ApplyPassive()
+    public override void ApplyPassive()
     {
         Debug.Log("Pasiva del Ermitaño: Robando carta extra...");
         DeckManager.Instance.DrawCard();

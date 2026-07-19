@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0decb8f095639c84a8099964ec31477a, type: 3}
   m_Name: Prueba1
   m_EditorClassIdentifier: Assembly-CSharp::EncounterData
+  rewards:
+  - {fileID: 11400000, guid: 14d67f81951760744a4aa3bd868c8277, type: 2}
   leftEnemies:
   - {fileID: 11400000, guid: 6025c3aa8f6027c4aa258fa4b88579b9, type: 2}
   rightEnemies:

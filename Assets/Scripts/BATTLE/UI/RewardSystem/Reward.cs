@@ -8,7 +8,7 @@ public abstract class Reward : ScriptableObject
     public string Text => text;
 
     [SerializeField] private Sprite image;
-    public Sprite Image => Image;
+    public Sprite Image => image;
 
     public abstract void GetReward(GameObject button);
 }

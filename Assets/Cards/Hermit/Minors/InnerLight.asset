@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InnerLight
   nameKey: Card_Inner_Name
   descriptionKey: Card_Inner_Desc
-  ID: 02
+  ID: 05
   cardArt: {fileID: 0}
   wisdomCost: 1
   minWisdomRequired: 2

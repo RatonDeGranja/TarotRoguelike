@@ -11,4 +11,6 @@ Card_Echoes_Name;Ecos del Tiempo;Echoes of Time;Ecos del Temps;;
 Card_Echoes_Desc;Crea una copia de la última carta jugada si es posible;Create a copy of the last card played, if possible;Crea una còpia de l'última carta jugada si és possible;;
 Card_Patience_Name;Paciencia;Patience;Paciència;;
 Card_Patience_Desc;Termina tu turno, gana {0} de Sabiduría;End your turn, gain {0} Wisdom;Acaba el teu torn, guanya {0} de Saviesa;;
+Card_Meditation_Name;Meditación;Meditation;Meditaciò;;
+Card_Meditation_Desc;Roba {0} cartas, si al final de tu turno no tienes cartas en mano ganas un turno extra; Draw {0} cards, if at the end of your turn you have no cards in hand gain an extra turn;Roba {0} cartes, si al final del teu torn no tens cartes a la mà guanya un torn extra;;
 ;;;;;

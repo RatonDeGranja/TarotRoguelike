@@ -29,14 +29,14 @@ public class HandManager : MonoBehaviour
     private void OnEnable()
     {
         GameEvents.onCardDrawn += OnCardDrawnVisual;
-        GameEvents.onCardPlayed += OnCardPlayedVisual;
+        GameEvents.onCardDiscarded += OnCardDiscarded;
     }
 
     private void OnDisable()
     {
         // Dejamos de escuchar si este script se apaga
         GameEvents.onCardDrawn -= OnCardDrawnVisual;
-        GameEvents.onCardPlayed -= OnCardPlayedVisual;
+        GameEvents.onCardDiscarded -= OnCardDiscarded;
     }
 
     private void OnCardDrawnVisual(Card drawnCardLogic)
@@ -55,7 +55,7 @@ public class HandManager : MonoBehaviour
         UpdateHandLayout();
     }
 
-    public void OnCardPlayedVisual(Card playedCardLogic)
+    public void OnCardDiscarded(Card playedCardLogic)
     {
         // Buscamos cuál es el "cartón" en pantalla que tiene esta lógica
         CardDisplay cardToDiscard = visualCards.Find(c => c.CardData == playedCardLogic);
@@ -64,6 +64,9 @@ public class HandManager : MonoBehaviour
             RemoveCardVisual(cardToDiscard); // Esto ya destruye el objeto y reordena el abanico
         }
     }
+
+
+    
 
     private void RemoveCardVisual(CardDisplay cardToRemove)
     {

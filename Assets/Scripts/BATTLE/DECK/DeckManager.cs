@@ -10,13 +10,11 @@ public class DeckManager : MonoBehaviour
     [SerializeField] private List<Card> deck; // Asigna ScriptableObjects aquí
     private Queue<Card> drawPile = new Queue<Card>();
     private Queue<Card> discardPile = new Queue<Card>();
-    private List<Card> hand = new List<Card>();
+    private HandCollection hand = new HandCollection();
 
 
     [SerializeField] private int startingHandSize = 5;
     [SerializeField] int maxHandSize;
-    [SerializeField] private int currentHandSize;
-    
     public static DeckManager Instance; // <- esta es la clave
 
     private void Awake()
@@ -38,11 +36,13 @@ public class DeckManager : MonoBehaviour
 
     private void OnCardPlayedLogic(Card playedCard)
     {
-        if (hand.Contains(playedCard))
+        for(int i = 0; i < hand.Count; i++)
         {
-            hand.Remove(playedCard);
-            discardPile.Enqueue(playedCard);
-            Debug.Log($"Carta descartada lógicamente. Cartas en descarte: {discardPile.Count}");
+            if(hand[i] == playedCard)
+            {
+                DiscardCard(i);
+                break;
+            }
         }
     }
 
@@ -118,6 +118,8 @@ public class DeckManager : MonoBehaviour
 
         
         Card drawnCard = drawPile.Dequeue();
+        hand.Add(drawnCard);
+
         // Avisamos de que una carta ha entrado a la mano
         GameEvents.onCardDrawn?.Invoke(drawnCard);
     }
@@ -129,21 +131,17 @@ public class DeckManager : MonoBehaviour
             Debug.Log("Descartando");
             Card carta = hand[index];
             hand.RemoveAt(index);
-            if (discardPile == null) Debug.LogError("¡La pila de descartes es null!");
-            if (HandManager.Instance == null) Debug.LogError("¡El HandManager es null!");
-            if (carta == null) Debug.LogError("¡La carta es null!");
             discardPile.Enqueue(carta);
-            HandManager.Instance.OnCardPlayedVisual(carta);
+            GameEvents.onCardDiscarded?.Invoke(carta);
             return true;
         }
         else
         {
-            //Debug.Log("No hay cartas que descartar");
+            Debug.Log("No hay cartas que descartar");
             return false;
         }
 
     }
-
     public void DiscardHand()
     {
         int contadorSeguridad = 0;
@@ -190,14 +188,9 @@ public class DeckManager : MonoBehaviour
         return drawPile.Count > 0;
     }
 
-    public Queue<Card> getDeck()
-    {
-        return drawPile;
-    }
 
     public Queue<Card> Deck => drawPile;
     public Queue<Card> Discard => discardPile;
-    public List<Card> Hand => hand;
-    public int HandSize => currentHandSize;
+    public HandCollection Hand => hand;
     public int MaxHandSize => maxHandSize;
 }

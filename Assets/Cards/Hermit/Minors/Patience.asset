@@ -17,7 +17,7 @@ MonoBehaviour:
   ID: 04
   cardArt: {fileID: 0}
   wisdomCost: 1
-  minWisdomRequired: 2
+  minWisdomRequired: 3
   target: 0
   type: 1
   canBeSavedAsLast: 1

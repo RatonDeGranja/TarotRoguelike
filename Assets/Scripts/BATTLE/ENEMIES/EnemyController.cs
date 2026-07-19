@@ -176,6 +176,9 @@ public class EnemyController : MonoBehaviour, IPointerClickHandler, IPointerEnte
 
     private void Die()
     {
+        //Para no poder usarle cartas
+        this.GetComponent<BoxCollider2D>().enabled = false;
+        
         StartCoroutine(FadeOutRoutine());
     }
 

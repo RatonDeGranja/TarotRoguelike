@@ -9,9 +9,10 @@ public class EncounterManager : MonoBehaviour
 
     [Header("Datos y Prefabs")]
     [SerializeField] private EncounterData encounterData; 
+    public EncounterData EncounterData => encounterData;
+
     [SerializeField] private GameObject enemyDisplay; 
-    [SerializeField] private List<Reward> rewards = new List<Reward>();
-    public List<Reward> Rewards => rewards; 
+    
 
     private int winGold;
     public int WinGold => winGold;
@@ -25,7 +26,7 @@ public class EncounterManager : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    private void Start()
+    /*private void Start()
     {
         winGold = encounterData.VictoryGold;
 
@@ -64,7 +65,50 @@ public class EncounterManager : MonoBehaviour
                 }
             }
         }
+    }*/
+    
+    // ¡Adiós al Start()! Ahora es un método que recibe datos
+    public void SpawnEncounter(EncounterData newEncounterData)
+    {
+        // 1. Actualizamos los datos del encuentro actual
+        encounterData = newEncounterData;
+        winGold = encounterData.VictoryGold;
+
+        // 2. Instanciamos a los enemigos de la izquierda
+        for (int i = 0; i < encounterData.leftEnemies.Length; i++)
+        {
+            Enemy enemyData = encounterData.leftEnemies[i];
+
+            if (enemyData != null && i < leftSlots.Length)
+            {
+                GameObject newEnemyObj = Instantiate(enemyDisplay, leftSlots[i].position, Quaternion.identity, leftSlots[i]);
+                EnemyController controller = newEnemyObj.GetComponent<EnemyController>();
+
+                if (controller != null)
+                {
+                    controller.Initialize(enemyData, FieldSide.Left);
+                }
+            }
+        }
+
+        // 3. Instanciamos a los enemigos de la derecha
+        for (int i = 0; i < encounterData.rightEnemies.Length; i++)
+        {
+            Enemy enemyData = encounterData.rightEnemies[i];
+
+            if (enemyData != null && i < rightSlots.Length)
+            {
+                GameObject newEnemyObj = Instantiate(enemyDisplay, rightSlots[i].position, Quaternion.identity, rightSlots[i]);
+                EnemyController controller = newEnemyObj.GetComponent<EnemyController>();
+
+                if (controller != null)
+                {
+                    controller.Initialize(enemyData, FieldSide.Right);
+                }
+            }
+        }
     }
+
     public void AddWinGold(int gold)
     {
         winGold += gold;

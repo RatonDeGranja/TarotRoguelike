@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
     private int maxHealth;
     private int currentHealth;
 
-    private int gold;
+    [SerializeField] private int gold;
 
     [Header("TEMPORAL STATS")]
     private int armor;
@@ -170,6 +170,11 @@ public class PlayerController : MonoBehaviour
     public void heal(int life_gained)
     {  
         StartCoroutine(GainLifeSteps(life_gained));
+    }
+    public void heal()
+    {  
+        currentHealth = maxHealth;
+        UpdateHealthBar();
     }
 
     public void GainWisdom(int wisdom_gained)
