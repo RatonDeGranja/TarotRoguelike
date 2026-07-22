@@ -69,4 +69,25 @@ public class LocalizationManager : MonoBehaviour
         }
         return key; 
     }
+
+    public void ChangeLenguageEN()
+    {
+        currentLanguage = Language.EN;
+        GameEvents.onLanguageChanged?.Invoke(); 
+        Debug.Log("Cambiar Ingles");
+    }
+
+    public void ChangeLenguageES()
+    {
+        currentLanguage = Language.ES;
+        GameEvents.onLanguageChanged?.Invoke();
+        Debug.Log("Cambiar Español");
+    }
+
+    public void ChangeLenguageVAL()
+    {
+        currentLanguage = Language.VAL;
+        GameEvents.onLanguageChanged?.Invoke();
+        Debug.Log("Cambiar Valenciano");
+    }
 }

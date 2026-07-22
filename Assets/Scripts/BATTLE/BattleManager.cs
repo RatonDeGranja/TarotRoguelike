@@ -14,7 +14,8 @@ public class BattleManager : MonoBehaviour
         WAITING_TARGET,
         ENEMY_TURN,
         WIN,
-        LOSE
+        LOSE,
+        SELECTING_CARD
     }
 
     [Header("Estado Actual")]
@@ -119,6 +120,9 @@ public class BattleManager : MonoBehaviour
     public void StartPlayerTurn()
     {
         state = BattleState.PLAYER_TURN;
+
+        PlayerController.Player.RecoverWisdom();
+        GameEvents.onPlayerWisdomChanged?.Invoke(PlayerController.Player.Wisdom);
         
         // El grito global activa las pasivas
         GameEvents.onTurnStart?.Invoke(); 
@@ -139,6 +143,7 @@ public class BattleManager : MonoBehaviour
         if (cardToPlay.Target == TargetType.ToPlayer)
         {
             // Ejecución inmediata
+            PlayerController.Player.UseWisdom(cardToPlay.WisdomCost);
             cardToPlay.PlayCard(PlayerController.Player, null);
             GameEvents.onCardPlayed?.Invoke(cardToPlay);
 
@@ -155,24 +160,14 @@ public class BattleManager : MonoBehaviour
         
     }
 
-    public void PlayCardOnTarget(Minor playedCard, EnemyController target)
-    {
-        if (state != BattleState.PLAYER_TURN) return;
-
-        if (PlayerController.Player.Wisdom < playedCard.WisdomCost || PlayerController.Player.Wisdom < playedCard.MinWisdomRequired) return;
-
-        // Ejecutamos la matemática
-        playedCard.PlayCard(PlayerController.Player, target);
-        
-        // Lanzamos el grito global para descartarla y limpiar memoria
-        GameEvents.onCardPlayed?.Invoke(playedCard);
-    }
-
     // Este método lo llama el EnemyController al hacerle click
     public void OnEnemyClicked(EnemyController clickedEnemy)
     {
         if (state == BattleState.WAITING_TARGET && pendingCard != null && !PlayerController.Player.CheckState(States.NO_ATTACK))
         {
+
+            PlayerController.Player.UseWisdom(pendingCard.WisdomCost);
+
             if (PlayerController.Player.CheckBackwards(clickedEnemy.Side))
             {
                 PlayerController.Player.ChangeDirection();

@@ -37,6 +37,7 @@ public class LocalizedText : MonoBehaviour
 
     private void UpdateTranslation()
     {
+        Debug.Log("Cambiando Idioma");
         myText.text = LocalizationManager.Instance.GetText(translationKey);
     }
 }

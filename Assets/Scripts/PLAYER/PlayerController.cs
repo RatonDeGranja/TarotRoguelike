@@ -6,7 +6,8 @@ using UnityEngine.InputSystem;
 public enum States
 {
     NO_ATTACK,
-    POISONED
+    POISONED,
+    NONE
 }
 
 [RequireComponent(typeof(SpriteRenderer))]
@@ -45,6 +46,7 @@ public class PlayerController : MonoBehaviour
 
 
 
+    public int StartWisdom => startWisdom;
     public int Wisdom => currentWisdom;
     public int Health => currentHealth;
     public int MaxHealth => maxHealth;
@@ -181,6 +183,21 @@ public class PlayerController : MonoBehaviour
     {
         currentWisdom += wisdom_gained;
         GameEvents.onPlayerWisdomChanged?.Invoke(currentWisdom);
+    }
+
+    public void UseWisdom(int wisdom_used)
+    {
+        if(currentWisdom >= wisdom_used)
+        {
+            currentWisdom -= wisdom_used;
+            GameEvents.onPlayerWisdomChanged?.Invoke(currentWisdom);
+        }
+    }
+
+    public void RecoverWisdom()
+    {
+        Debug.Log("Recuperar Wisdom");
+        currentWisdom = startWisdom;
     }
 
     public void GainGold(int gold_gained)
